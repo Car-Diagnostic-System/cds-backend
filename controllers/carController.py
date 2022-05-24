@@ -24,11 +24,15 @@ def getAll():
     return jsonify(result)
 
 def getById(car_id):
-    car = Car.query.get_or_404(car_id)
+    car = Car.query.get(car_id)
+    if (car == None):
+        return jsonify({'error': 'The car id {} is not existed'.format(car_id)}), 404
     return jsonify(car.serialize)
 
 def updateById(car_id):
-    car = Car.query.get_or_404(car_id)
+    car = Car.query.get(car_id)
+    if (car == None):
+        return jsonify({'error': 'The car id {} is not existed'.format(car_id)}), 404
     car.brand = request.get_json()['brand']
     car.model = request.get_json()['model']
     car.nickname = request.get_json()['nickname']

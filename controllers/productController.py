@@ -7,7 +7,7 @@ import json
 db = SQLAlchemy()
 
 # Kafka config
-TOPIC_NAME = 'INFERENrCE'
+TOPIC_NAME = 'INFERENCE'
 KAFKA_SERVER = 'localhost:9092'
 
 producer = KafkaProducer(
@@ -28,13 +28,15 @@ def create():
     return jsonify({'message': 'The product information is created successfully'})
 
 def getById(product_id):
-    product = Product.query.get_or_404(product_id)
+    product = Product.query.filter_by(serial_no=product_id).first()
+    if(product == None):
+        return jsonify({'error': 'The product id {} is not existed'.format(product_id)}), 404
     return jsonify(product.serialize)
 
 def updateById(product_id):
-    product = Product.query.get_or_404(product_id)
-
-    product.serial_no = request.get_json()['serial_no']
+    product = Product.query.filter_by(serial_no=product_id).first()
+    if (product == None):
+        return jsonify({'error': 'The product id {} is not existed'.format(product_id)}), 404
     product.supplier_no = request.get_json()['supplier_no']
     product.oem_no = request.get_json()['oem_no']
     product.benchmark_no = request.get_json()['benchmark_no']
@@ -47,6 +49,7 @@ def updateById(product_id):
     product.brand = request.get_json()['brand']
     product.item_group = request.get_json()['item_group']
     product.stock_uom = request.get_json()['stock_uom']
+    print(product)
     db.session.commit()
     return jsonify(product.serialize)
 
@@ -57,7 +60,6 @@ def deleteById(product_id):
         db.session.commit()
     except:
         return jsonify({'error': 'The product id {} is not existed'.format(product_id)}), 404
-
     return jsonify({'message': 'The car product {} is deleted successfully'.format(product_id)})
 
 def querySymptom():

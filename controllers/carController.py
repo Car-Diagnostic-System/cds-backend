@@ -23,6 +23,17 @@ def getAll():
         result[m['brand']].append({'id': m['id'], 'model': m['model'], 'model_th': m['model_th'], 'nickname': m['nickname']})
     return jsonify(result)
 
+def getAllPagination(page=1):
+    perPage = 10
+    cars = Car.query.paginate(page=page, per_page=perPage, error_out=False)
+    totalPage = cars.pages
+    hasNext = cars.has_next
+    hasPrev = cars.has_prev
+    nextPage = cars.next_num
+    prevPage = cars.prev_num
+    cars = Car.serialize_list(cars.items)
+    return jsonify({'currentPage': page, 'totalPage': totalPage, 'hasNext':hasNext, 'hasPrev': hasPrev, 'nextPage':nextPage, 'prevPage':prevPage, 'data': cars})
+
 def getById(car_id):
     car = Car.query.get(car_id)
     if (car == None):

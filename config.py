@@ -13,5 +13,6 @@ SQLALCHEMY_DATABASE_URI = 'mysql://root:password@127.0.0.1:3366/cds'
 
 # Turn off the Flask-SQLAlchemy event system and warning
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+JSON_SORT_KEYS = False
 
 CORS_HEADERS = 'Content-Type'

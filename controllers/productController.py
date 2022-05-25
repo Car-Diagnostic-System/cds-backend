@@ -1,14 +1,19 @@
 from flask import jsonify, request
 from models.products import Product
-from kafka import KafkaConsumer, KafkaProducer
+from kafka import KafkaConsumer, KafkaProducer, TopicPartition
 from flask_sqlalchemy import SQLAlchemy
 import json
 
 db = SQLAlchemy()
-
-# Kafka config
-TOPIC_NAME = 'INFERENCE'
+CONSUMER_TOPIC_NAME = "QUERY-RESPONSE"
+PRODUCER_TOPIC_NAME = 'QUERY'
 KAFKA_SERVER = 'localhost:9092'
+
+consumer = KafkaConsumer(
+    # CONSUMER_TOPIC_NAME,
+    bootstrap_servers=KAFKA_SERVER,
+    value_deserializer=lambda m: json.loads(m.decode('utf-8')),
+)
 
 producer = KafkaProducer(
     bootstrap_servers=KAFKA_SERVER,
@@ -69,13 +74,29 @@ def querySymptom():
     json_payload = json.dumps(body['symptom'])
     json_payload = str.encode(json_payload)
 
-    producer.send(TOPIC_NAME, json_payload)
+    producer.send(PRODUCER_TOPIC_NAME, json_payload)
     producer.flush()
-
+    # Kafka consume
+    tp = TopicPartition(CONSUMER_TOPIC_NAME, 0)
+    consumer.assign([tp])
+    consumer.seek_to_end(tp)
+    lastOffSet = consumer.position(tp)
+    consumer.seek_to_beginning(tp)
+    parts = {}
+    for msg in consumer:
+        if(msg.offset == lastOffSet -1):
+            parts = msg.value
+            break
     product = Product.query.filter(((Product.car_brand == body['brand']) | (Product.car_brand == "")) &
                                    ((Product.car_model == body['model']) | (Product.car_model == "")) &
                                    ((Product.nickname == body['nickname']) | (Product.nickname == "")))
     product = Product.serialize_list(product)
+
+    result = {p: [] for p in parts.keys()}
+
+    for p in product:
+        if (p['item_name'] in result.keys()):
+            result[p['item_name']].append(p)
     if(len(product) == 0):
         return jsonify({'error': 'The product is not found'}), 404
-    return jsonify(product)
+    return jsonify(result)

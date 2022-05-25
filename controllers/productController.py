@@ -32,6 +32,23 @@ def create():
 
     return jsonify({'message': 'The product information is created successfully'})
 
+def getAll():
+    products = Product.query.all()
+    products = Product.serialize_list(products)
+    return jsonify(products)
+
+
+def getAllPagination(page=1):
+    perPage = 10
+    products = Product.query.paginate(page=page, per_page=perPage, error_out=False)
+    totalPage = products.pages
+    hasNext = products.has_next
+    hasPrev = products.has_prev
+    nextPage = products.next_num
+    prevPage = products.prev_num
+    products = Product.serialize_list(products.items)
+    return jsonify({'currentPage': page, 'totalPage': totalPage, 'hasNext':hasNext, 'hasPrev': hasPrev, 'nextPage':nextPage, 'prevPage':prevPage, 'data': products})
+
 def getById(product_id):
     product = Product.query.filter_by(serial_no=product_id).first()
     if(product == None):

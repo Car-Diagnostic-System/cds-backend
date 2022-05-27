@@ -1,3 +1,5 @@
+from time import sleep
+
 from flask import jsonify, request
 from models.products import Product
 from kafka import KafkaConsumer, KafkaProducer, TopicPartition
@@ -10,7 +12,6 @@ PRODUCER_TOPIC_NAME = 'QUERY'
 KAFKA_SERVER = 'localhost:9092'
 
 consumer = KafkaConsumer(
-    # CONSUMER_TOPIC_NAME,
     bootstrap_servers=KAFKA_SERVER,
     value_deserializer=lambda m: json.loads(m.decode('utf-8')),
 )
@@ -36,7 +37,6 @@ def getAll():
     products = Product.query.all()
     products = Product.serialize_list(products)
     return jsonify(products)
-
 
 def getAllPagination(page=1):
     perPage = 10
@@ -88,11 +88,12 @@ def querySymptom():
     body = request.get_json()
 
     # Kafka produce
-    json_payload = json.dumps(body['symptom'])
+    json_payload = json.dumps(body)
     json_payload = str.encode(json_payload)
 
     producer.send(PRODUCER_TOPIC_NAME, json_payload)
     producer.flush()
+    sleep(0.05)
     # Kafka consume
     tp = TopicPartition(CONSUMER_TOPIC_NAME, 0)
     consumer.assign([tp])
@@ -100,6 +101,7 @@ def querySymptom():
     lastOffSet = consumer.position(tp)
     consumer.seek_to_beginning(tp)
     parts = {}
+
     for msg in consumer:
         if(msg.offset == lastOffSet -1):
             parts = msg.value
@@ -108,12 +110,27 @@ def querySymptom():
                                    ((Product.car_model == body['model']) | (Product.car_model == "")) &
                                    ((Product.nickname == body['nickname']) | (Product.nickname == "")))
     product = Product.serialize_list(product)
+    result = []
+    for p in parts.items():
+        obj = {
+            'part': p[0],
+            'score': p[1],
+            'product': list(filter(lambda s: s['item_name'] == p[0], product))
+        }
+        result.append(obj)
 
-    result = {p: [] for p in parts.keys()}
-
-    for p in product:
-        if (p['item_name'] in result.keys()):
-            result[p['item_name']].append(p)
     if(len(product) == 0):
         return jsonify({'error': 'The product is not found'}), 404
+    
     return jsonify(result)
+
+
+# [
+#     {
+#         'name': 'โบลเวอร์',
+#         'products': [
+#             {'serial_no': 'AA-0000603', 'supplier_no': 'C1N020', 'oem_no': '45022-SEL-T02', 'benchmark_no': '', 'car_brand': 'HONDA', 'car_model': 'JAZZ', 'model_name_th': 'แจ๊ส', 'nickname': '', 'item_name': 'ผ้าดิสเบรค', 'fitment_detail': 'หน้า', 'brand': 'ADVICS', 'item_group': 'เทียบแท้เกรด A', 'stock_uom': 'ชิ้น'},
+#             {'serial_no': 'AA-0000603', 'supplier_no': 'C1N020', 'oem_no': '45022-SEL-T02', 'benchmark_no': '', 'car_brand': 'HONDA', 'car_model': 'JAZZ', 'model_name_th': 'แจ๊ส', 'nickname': '', 'item_name': 'ผ้าดิสเบรค', 'fitment_detail': 'หน้า', 'brand': 'ADVICS', 'item_group': 'เทียบแท้เกรด A', 'stock_uom': 'ชิ้น'}
+#         ]
+#     }
+# ]

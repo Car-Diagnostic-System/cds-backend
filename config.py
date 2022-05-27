@@ -16,3 +16,16 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 JSON_SORT_KEYS = False
 
 CORS_HEADERS = 'Content-Type'
+
+# brands = tuple(set(map(lambda s: (s['brand'], s['brand_th']), cars)))
+# result = []
+# for car in brands:
+#     obj = {'brand': car[0], 'brand_th':car[1], 'model': list(filter(lambda s: s['brand'] == car[0], cars))}
+#     obj['model']
+#     result.append(obj)
+#
+# import pandas as pd
+#
+# df = pd.DataFrame(cars)
+# gdf = df.groupby('model')
+# gdf = gdf['nickname'].apply(set)

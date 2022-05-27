@@ -7,11 +7,11 @@ class Car(db.Model):
     brand_th = db.Column(db.String(255))
     model = db.Column(db.String(255))
     model_th = db.Column(db.String(255))
-    segment = db.Column(db.String(255))
 
     nickname = db.Column(db.String(255))
+    segment = db.Column(db.String(255))
 
-    def __init__(self, brand, brand_th, model,model_th, nickname, segment):
+    def __init__(self, brand, brand_th, model, model_th, nickname, segment):
         self.brand = brand
         self.brand_th = brand_th
         self.model = model

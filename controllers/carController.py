@@ -6,7 +6,7 @@ db = SQLAlchemy()
 
 def create():
     body = request.get_json()
-    car = Car(body['brand'], body['model'], body['nickname'])
+    car = Car(body['brand'], body['brand_th'], body['model'], body['model_th'], body['nickname'], body['segment'])
     try:
         db.session.add(car)
         db.session.commit()
@@ -18,9 +18,13 @@ def create():
 def getAll():
     cars = Car.query.all()
     cars = Car.serialize_list(cars)
-    result = {m['brand']: [] for m in cars}
-    for m in cars:
-        result[m['brand']].append({'id': m['id'], 'model': m['model'], 'model_th': m['model_th'], 'nickname': m['nickname']})
+    brands = tuple(set(map(lambda s: (s['brand'], s['brand_th']), cars)))
+    result = []
+    for car in brands:
+        obj = {'brand': car[0], 'brand_th': car[1], 'model': list(filter(lambda s: s['brand'] == car[0], cars))}
+        obj['model']
+        result.append(obj)
+    result = sorted(result, key=lambda d: d['brand'])
     return jsonify(result)
 
 def getAllPagination(page=1):

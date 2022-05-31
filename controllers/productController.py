@@ -1,25 +1,7 @@
-from time import sleep
-
 from flask import jsonify, request
 from models.products import Product
-from kafka import KafkaConsumer, KafkaProducer, TopicPartition
 from flask_sqlalchemy import SQLAlchemy
-import json
-
 db = SQLAlchemy()
-CONSUMER_TOPIC_NAME = "QUERY-RESPONSE"
-PRODUCER_TOPIC_NAME = 'QUERY'
-KAFKA_SERVER = 'localhost:9092'
-
-consumer = KafkaConsumer(
-    bootstrap_servers=KAFKA_SERVER,
-    value_deserializer=lambda m: json.loads(m.decode('utf-8')),
-)
-
-producer = KafkaProducer(
-    bootstrap_servers=KAFKA_SERVER,
-    api_version=(0, 11, 15)
-)
 
 def create():
     body = request.get_json()
@@ -83,54 +65,3 @@ def deleteById(product_id):
     except:
         return jsonify({'error': 'The product id {} is not existed'.format(product_id)}), 404
     return jsonify({'message': 'The car product {} is deleted successfully'.format(product_id)})
-
-def querySymptom():
-    body = request.get_json()
-
-    # Kafka produce
-    json_payload = json.dumps(body)
-    json_payload = str.encode(json_payload)
-
-    producer.send(PRODUCER_TOPIC_NAME, json_payload)
-    producer.flush()
-    sleep(0.05)
-    # Kafka consume
-    tp = TopicPartition(CONSUMER_TOPIC_NAME, 0)
-    consumer.assign([tp])
-    consumer.seek_to_end(tp)
-    lastOffSet = consumer.position(tp)
-    consumer.seek_to_beginning(tp)
-    parts = {}
-
-    for msg in consumer:
-        if(msg.offset == lastOffSet -1):
-            parts = msg.value
-            break
-    product = Product.query.filter(((Product.car_brand == body['brand']) | (Product.car_brand == "")) &
-                                   ((Product.car_model == body['model']) | (Product.car_model == "")) &
-                                   ((Product.nickname == body['nickname']) | (Product.nickname == "")))
-    product = Product.serialize_list(product)
-    result = []
-    for p in parts.items():
-        obj = {
-            'part': p[0],
-            'score': p[1],
-            'product': list(filter(lambda s: s['item_name'] == p[0], product))
-        }
-        result.append(obj)
-
-    if(len(product) == 0):
-        return jsonify({'error': 'The product is not found'}), 404
-    
-    return jsonify(result)
-
-
-# [
-#     {
-#         'name': 'โบลเวอร์',
-#         'products': [
-#             {'serial_no': 'AA-0000603', 'supplier_no': 'C1N020', 'oem_no': '45022-SEL-T02', 'benchmark_no': '', 'car_brand': 'HONDA', 'car_model': 'JAZZ', 'model_name_th': 'แจ๊ส', 'nickname': '', 'item_name': 'ผ้าดิสเบรค', 'fitment_detail': 'หน้า', 'brand': 'ADVICS', 'item_group': 'เทียบแท้เกรด A', 'stock_uom': 'ชิ้น'},
-#             {'serial_no': 'AA-0000603', 'supplier_no': 'C1N020', 'oem_no': '45022-SEL-T02', 'benchmark_no': '', 'car_brand': 'HONDA', 'car_model': 'JAZZ', 'model_name_th': 'แจ๊ส', 'nickname': '', 'item_name': 'ผ้าดิสเบรค', 'fitment_detail': 'หน้า', 'brand': 'ADVICS', 'item_group': 'เทียบแท้เกรด A', 'stock_uom': 'ชิ้น'}
-#         ]
-#     }
-# ]

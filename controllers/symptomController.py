@@ -66,15 +66,15 @@ def query():
 
 def indexing():
     if 'file' not in request.files:
-        return jsonify({'error': 'No file is not exist'})
+        return jsonify({'error': 'No file is not exist'}), 400
     file = request.files['file']
     if file.filename.split('.')[-1].lower() != 'xlsx':
-        return jsonify({'error': 'Require xlsx file format'})
+        return jsonify({'error': 'Require xlsx file format'}), 400
     df = pd.read_excel(file)
     if(len(df.columns) != 2):
-        return jsonify({'error': 'Require only two columns of xlsx file'})
+        return jsonify({'error': 'Require only two columns of xlsx file'}), 400
     if (len(df.index) == 0):
-        return jsonify({'error': 'The xlsx is empty'})
+        return jsonify({'error': 'The xlsx is empty'}), 400
 
     # send along with kafka INDEX topic
     json_payload = df.to_json()

@@ -23,8 +23,10 @@ producer = KafkaProducer(
     api_version=(0, 11, 15)
 )
 
-def query():
+def queryCarSymptom():
     body = request.get_json()
+    if body['brand'] == '' or body['model'] == '' or body['nickname'] == '' or body['symptom'] == '':
+        return jsonify({'message': 'The brand, model, nickname, and symptom are required'}), 400
 
     # Kafka produce
     json_payload = json.dumps(body)
@@ -59,22 +61,22 @@ def query():
         result.append(obj)
 
     if (len(product) == 0):
-        return jsonify({'error': 'The product is not found'}), 404
+        return jsonify({'message': 'The product is not found'}), 404
 
     return jsonify(result)
 
 
 def indexing():
     if 'file' not in request.files:
-        return jsonify({'error': 'No file is not exist'}), 400
+        return jsonify({'message': 'No file is not exist'}), 400
     file = request.files['file']
     if file.filename.split('.')[-1].lower() != 'xlsx':
-        return jsonify({'error': 'Require xlsx file format'}), 400
+        return jsonify({'message': 'Require xlsx file format'}), 400
     df = pd.read_excel(file)
     if(len(df.columns) != 2):
-        return jsonify({'error': 'Require only two columns of xlsx file'}), 400
+        return jsonify({'message': 'Require only two columns of xlsx file'}), 400
     if (len(df.index) == 0):
-        return jsonify({'error': 'The xlsx is empty'}), 400
+        return jsonify({'message': 'The xlsx file is empty'}), 400
 
     # send along with kafka INDEX topic
     json_payload = df.to_json()

@@ -2,10 +2,10 @@ from flask import Flask
 from flask_cors import CORS
 
 from sqlalchemy_utils.functions import database_exists, create_database
-from routes.user_bp import user_bp
-from routes.car_bp import car_bp
-from routes.product_bp import product_bp
-from routes.symptom_bp import symptom_bp
+from routes.user_bp import UserBlueprint
+from routes.car_bp import CarBlueprint
+from routes.product_bp import ProductBlueprint
+from routes.symptom_bp import SymptomBlueprint
 from models.database import db
 
 app = Flask(__name__)
@@ -21,10 +21,10 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-app.register_blueprint(user_bp)
-app.register_blueprint(car_bp)
-app.register_blueprint(product_bp)
-app.register_blueprint(symptom_bp)
+app.register_blueprint(UserBlueprint.user_bp)
+app.register_blueprint(CarBlueprint.car_bp)
+app.register_blueprint(ProductBlueprint.product_bp)
+app.register_blueprint(SymptomBlueprint.symptom_bp)
 
 if __name__ == '__main__':
     app.run()

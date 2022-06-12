@@ -1,8 +1,8 @@
 from flask import jsonify, request
 from models.products import Product
 from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
 
+db = SQLAlchemy()
 
 class ProductController:
     @staticmethod
@@ -60,7 +60,6 @@ class ProductController:
         product.brand = request.get_json()['brand']
         product.item_group = request.get_json()['item_group']
         product.stock_uom = request.get_json()['stock_uom']
-        print(product)
         db.session.commit()
         return jsonify(product.serialize)
 

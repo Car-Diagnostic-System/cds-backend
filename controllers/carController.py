@@ -4,7 +4,7 @@ from flask import jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
-class carController:
+class CarController:
     @staticmethod
     def createCar():
         body = request.get_json()

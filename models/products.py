@@ -52,5 +52,5 @@ class Product(db.Model):
         }
 
     @staticmethod
-    def serialize_list(l):
-        return [m.serialize for m in l]
+    def serialize_list(list):
+        return [m.serialize for m in list]

@@ -61,10 +61,6 @@ class SymptomController:
                 'product': list(filter(lambda s: s['item_name'] == p[0], product))
             }
             result.append(obj)
-
-        if (len(product) == 0):
-            return jsonify({'message': 'The product is not found'}), 404
-
         return jsonify(result)
 
     @staticmethod

@@ -1,7 +1,7 @@
 from .database import db
 
 class Product(db.Model):
-    __tablename__ = 'products'
+    __tablename__ = 'product'
 
     serial_no = db.Column(db.String(255), primary_key=True)
     supplier_no = db.Column(db.String(255), nullable=False)

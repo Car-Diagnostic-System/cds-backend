@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from models.products import Product
+from models.product import Product
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()

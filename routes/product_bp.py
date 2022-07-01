@@ -1,8 +1,5 @@
 from flask import Blueprint
-
 from controllers.productController import ProductController
-
-
 
 class ProductBlueprint:
     product_bp = Blueprint('product_bp', __name__, url_prefix='/products')

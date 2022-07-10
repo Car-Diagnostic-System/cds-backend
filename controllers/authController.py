@@ -5,8 +5,8 @@ import bcrypt
 from models.user import User
 from models.role import Role
 from models.car import Car
-
 from flask_sqlalchemy import SQLAlchemy
+
 db = SQLAlchemy()
 
 class AuthController:
@@ -71,7 +71,6 @@ class AuthController:
             user.password = password_salt
             db.session.commit()
             return jsonify({'message': 'The password change successfully'}), 400
-
         return jsonify({'message': 'The current password is match'}), 400
 
     @staticmethod
@@ -83,7 +82,6 @@ class AuthController:
             if(user):
                 return jsonify({'email': user.serialize['email']})
             return jsonify({'message': 'The email is available'})
-
         except:
             return jsonify({'message': 'The body required email'}), 400
 

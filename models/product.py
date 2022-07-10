@@ -2,7 +2,6 @@ from .database import db
 
 class Product(db.Model):
     __tablename__ = 'product'
-
     serial_no = db.Column(db.String(255), primary_key=True)
     supplier_no = db.Column(db.String(255), nullable=False)
     oem_no = db.Column(db.String(255), nullable=False)
@@ -48,7 +47,6 @@ class Product(db.Model):
             'brand': self.brand,
             'item_group': self.item_group,
             'stock_uom': self.stock_uom,
-
         }
 
     @staticmethod

@@ -21,7 +21,6 @@ class User(db.Model):
         self.role = role
         self.car = car
 
-
     @property
     def serialize(self):
         return {

@@ -2,18 +2,20 @@ from .database import db
 
 class Bookmark(db.Model):
     __tablename__ = 'bookmark'
-    id = db.Column(db.Integer, primary_key=True)
-    #
-    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-    # user = db.relationship("User", backref=db.backref("user", uselist=False))
-    #
-    # product_serial_no = db.Column(db.String(255), db.ForeignKey('products.serial_no'), primary_key=True)
-    # product = db.relationship("Product", backref=db.backref("product", uselist=False))
+    user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, primary_key=True)
+    product = db.Column(db.String(255), db.ForeignKey('product.serial_no'), nullable=False, primary_key=True)
+
+    def __init__(self, user, product):
+        self.user = user
+        self.product = product
 
     @property
     def serialize(self):
         return {
-            'id': self.id
-            # 'user_id': self.user_id,
-            # 'product_serial_no': self.product_serial_no
-         }
+            'user': self.user,
+            'product': self.product,
+        }
+
+    @staticmethod
+    def serialize_list(list):
+        return [m.serialize for m in list]

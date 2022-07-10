@@ -53,7 +53,6 @@ class CarController:
     @staticmethod
     def updateCarById(car_id):
         car = db.session.query(Car).filter_by(id=car_id).first()
-        print(car)
         if (car == None):
             return jsonify({'message': 'The car id {} is not existed'.format(car_id)}), 404
         car.brand = request.get_json()['brand']

@@ -1,15 +1,16 @@
 from .database import db
 
 class Car(db.Model):
-    __tablename__ = 'cars'
+    __tablename__ = 'car'
     id = db.Column(db.Integer, primary_key=True)
     brand = db.Column(db.String(255))
     brand_th = db.Column(db.String(255))
     model = db.Column(db.String(255))
     model_th = db.Column(db.String(255))
-
     nickname = db.Column(db.String(255))
     segment = db.Column(db.String(255))
+    user = db.relationship('User', backref='Car', lazy=True)
+
 
     def __init__(self, brand, brand_th, model, model_th, nickname, segment):
         self.brand = brand

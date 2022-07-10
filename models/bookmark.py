@@ -1,7 +1,7 @@
 from .database import db
 
 class Bookmark(db.Model):
-    __tablename__ = 'bookmarks'
+    __tablename__ = 'bookmark'
     id = db.Column(db.Integer, primary_key=True)
     #
     # user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)

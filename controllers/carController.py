@@ -1,7 +1,7 @@
 from models.car import Car
 from flask import jsonify, request
-
 from flask_sqlalchemy import SQLAlchemy
+from controllers.token import Token
 db = SQLAlchemy()
 
 class CarController:
@@ -18,6 +18,7 @@ class CarController:
         return jsonify({'message': 'The car information is created successfully'})
 
     @staticmethod
+    @Token.token_required
     def getAllCar():
         cars = Car.query.all()
         cars = Car.serialize_list(cars)

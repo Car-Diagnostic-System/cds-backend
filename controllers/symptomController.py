@@ -5,7 +5,7 @@ from flask import jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from kafka import KafkaConsumer, KafkaProducer, TopicPartition
 
-from models.products import Product
+from models.product import Product
 
 db = SQLAlchemy()
 

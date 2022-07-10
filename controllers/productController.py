@@ -45,7 +45,7 @@ class ProductController:
 
     @staticmethod
     def updateProductById(product_id):
-        product = Product.query.filter_by(serial_no=product_id).first()
+        product = db.session.query(Product).filter_by(serial_no=product_id).first()
         if (product == None):
             return jsonify({'message': 'The product id {} is not existed'.format(product_id)}), 404
         product.supplier_no = request.get_json()['supplier_no']

@@ -7,5 +7,5 @@ class ProductBlueprint:
     product_bp.route('/', methods=['GET'])(ProductController.getAllProduct)
     product_bp.route('/page/<int:page>', methods=['GET'])(ProductController.getAllProductPagination)
     product_bp.route('/<string:product_id>', methods=['GET'])(ProductController.getProductById)
-    product_bp.route('/<string:product_id>/edit', methods=['POST'])(ProductController.updateProductById)
+    product_bp.route('/<string:product_id>/update', methods=['POST'])(ProductController.updateProductById)
     product_bp.route('/<string:product_id>/delete', methods=['DELETE'])(ProductController.deleteProductById)

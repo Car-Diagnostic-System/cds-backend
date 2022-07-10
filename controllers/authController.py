@@ -14,10 +14,8 @@ class AuthController:
     def createAuthenticationToken():
         # NOTE: body contain email and password
         body = request.get_json()
-        print(body['email'].lower())
         try:
             user = User.query.filter_by(email=body['email'].lower()).first()
-            print(user)
             if (bcrypt.checkpw(body['password'].encode('utf-8'), bytes(user.serialize_auth['password'], 'utf-8'))):
                 role = Role.query.filter_by(id=user.role).first().serialize
                 car = None

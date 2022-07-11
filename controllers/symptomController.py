@@ -4,7 +4,6 @@ import pandas as pd
 from flask import jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from kafka import KafkaConsumer, KafkaProducer, TopicPartition
-
 from models.product import Product
 
 db = SQLAlchemy()
@@ -29,11 +28,9 @@ class SymptomController:
         body = request.get_json()
         if body['brand'] == '' or body['model'] == '' or body['nickname'] == '' or body['symptom'] == '':
             return jsonify({'message': 'The brand, model, nickname, and symptom are required'}), 400
-
         # Kafka produce
         json_payload = json.dumps(body)
         json_payload = str.encode(json_payload)
-
         producer.send(PRODUCER_TOPIC_NAME, json_payload)
         producer.flush()
         sleep(1)
@@ -44,7 +41,6 @@ class SymptomController:
         lastOffSet = consumer.position(tp)
         consumer.seek_to_beginning(tp)
         parts = {}
-
         for msg in consumer:
             if (msg.offset == lastOffSet - 1):
                 parts = msg.value
@@ -75,12 +71,9 @@ class SymptomController:
             return jsonify({'message': 'Require only two columns of xlsx file'}), 400
         if (len(df.index) == 0):
             return jsonify({'message': 'The xlsx file is empty'}), 400
-
         # send along with kafka INDEX topic
         json_payload = df.to_json()
         json_payload = str.encode(json_payload)
-
         producer.send('INDEX', json_payload)
         producer.flush()
-
         return jsonify({'message': 'Upload indexing file successfully'})

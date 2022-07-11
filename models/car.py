@@ -11,7 +11,6 @@ class Car(db.Model):
     segment = db.Column(db.String(255))
     user = db.relationship('User', backref='Car', lazy=True)
 
-
     def __init__(self, brand, brand_th, model, model_th, nickname, segment):
         self.brand = brand
         self.brand_th = brand_th

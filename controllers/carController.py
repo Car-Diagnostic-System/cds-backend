@@ -14,11 +14,10 @@ class CarController:
             db.session.commit()
         except:
             return jsonify({'message': 'This car information is already existed'}), 404
-
         return jsonify({'message': 'The car information is created successfully'})
 
     @staticmethod
-    @Token.token_required
+    # @Token.token_required
     def getAllCar():
         cars = Car.query.all()
         cars = Car.serialize_list(cars)
@@ -26,7 +25,6 @@ class CarController:
         result = []
         for car in brands:
             obj = {'brand': car[0], 'brand_th': car[1], 'model': list(filter(lambda s: s['brand'] == car[0], cars))}
-            obj['model']
             result.append(obj)
         result = sorted(result, key=lambda d: d['brand'])
         return jsonify(result)

@@ -1,5 +1,4 @@
 from flask import Blueprint
-
 from controllers.symptomController import SymptomController
 
 class SymptomBlueprint:

@@ -1,5 +1,4 @@
 from flask import Blueprint
-
 from controllers.carController import CarController
 
 class CarBlueprint:

@@ -45,27 +45,28 @@ class AuthController:
         return jsonify({'message': 'The user information is created successfully'})
 
     @staticmethod
-    def updateUserById(user_id):
-        user = db.session.query(User).filter_by(id=user_id).first()
+    def updateUserById():
+        body = request.get_json()
+        user = db.session.query(User).filter_by(id=body['userId']).first()
         try:
             if (user == None):
-                return jsonify({'message': 'The user id {} is not existed'.format(user_id)}), 404
+                return jsonify({'message': 'The user id {} is not existed'.format(body['userId'])}), 404
             # NOTE: can update imageProfile, email, firstname, lastname, and car
-            user.imageProfile = request.get_json()['imageProfile']
-            user.email = request.get_json()['email']
-            user.firstname = request.get_json()['firstname']
-            user.lastname = request.get_json()['lastname']
-            user.car = request.get_json()['car']
+            user.imageProfile = body['imageProfile']
+            user.email = body['email']
+            user.firstname = body['firstname']
+            user.lastname = body['lastname']
+            user.car = body['car']
             db.session.commit()
             return jsonify(user.serialize)
         except:
             return jsonify({'message': 'This email is already taken'}), 400
 
     @staticmethod
-    def updatePasswordByUserId(user_id):
-        # NOTE: body contain password
+    def updatePasswordByUserId():
+        # NOTE: body contain userId, oldPassword, and newPassword
         body = request.get_json()
-        user = db.session.query(User).filter_by(id=user_id).first()
+        user = db.session.query(User).filter_by(id=body['userId']).first()
         if (bcrypt.checkpw(body['oldPassword'].encode('utf-8'), bytes(user.serialize_auth['password'], 'utf-8'))):
             password_salt = bcrypt.hashpw(body['newPassword'].encode('utf-8'), bcrypt.gensalt(10))
             user.password = password_salt

@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from models.bookmark import Bookmark
+from models.product import Product
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -15,7 +16,7 @@ class BookmarkController:
             products = []
             for b in bookmarks:
                 userId = b['user']
-                products.append(b['product'])
+                products.append(Product.query.filter_by(serial_no=b['product']).first().serialize)
             result = {'userID': userId, 'products': products}
             return jsonify(result)
         except:

@@ -1,14 +1,15 @@
 import bcrypt
 from sqlalchemy import event
-from models.database import db
-from models.car import Car
-from models.role import Role
-from models.user import User
-from models.product import Product
+from .database import db
+from .car import Car
+from .role import Role
+from .user import User
+from .product import Product
+from .bookmark import Bookmark
 import pandas as pd
 
 @event.listens_for(Car.__table__, 'after_create')
-def create_cars(*args, **kwargs):
+def create_car(*args, **kwargs):
     print('Inserting car table')
     cars = pd.read_csv('assets/cars.csv')
     for car in cars.values:
@@ -22,7 +23,7 @@ def create_cars(*args, **kwargs):
         db.session.commit()
 
 @event.listens_for(Product.__table__, 'after_create')
-def create_products(*args, **kwargs):
+def create_product(*args, **kwargs):
     print('Inserting product table')
     products = pd.read_csv('assets/products.csv')
     for product in products.values:
@@ -44,17 +45,25 @@ def create_products(*args, **kwargs):
         db.session.commit()
 
 @event.listens_for(Role.__table__, 'after_create')
-def create_roles(*args, **kwargs):
+def create_role(*args, **kwargs):
     print('Inserting role table')
     db.session.add(Role('USER'))
     db.session.add(Role('ADMIN'))
     db.session.commit()
 
 @event.listens_for(User.__table__, 'after_create')
-def create_users(*args, **kwargs):
+def create_user(*args, **kwargs):
     print('Inserting user table')
     db.session.add(User(imageProfile='image.png', firstname='ตุลยวัต', lastname='ทับคง', email='tulyawatt@gmail.com', password=bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt(10)), role=2, car=None))
     db.session.add(User(imageProfile='image.png', firstname='กฤตพร', lastname='แก้วปิยรัตน์', email='krittaporn.tong@gmail.com', password=bcrypt.hashpw('1234'.encode('utf-8'), bcrypt.gensalt(10)), role=1, car=1016))
     db.session.add(User(imageProfile='image.png', firstname='พรมงคง', lastname='พุทธิแจ่ม', email='fax@gmail.com', password=bcrypt.hashpw('faxpassword'.encode('utf-8'), bcrypt.gensalt(10)), role=1, car=322))
     db.session.add(User(imageProfile='image.png', firstname='ภาสกร', lastname='เปียงใจ', email='kong@gmail.com', password=bcrypt.hashpw('kongpassword'.encode('utf-8'), bcrypt.gensalt(10)), role=1, car=921))
+    db.session.commit()
+
+@event.listens_for(Bookmark.__table__, 'after_create')
+def create_bookmark(*args, **kwargs):
+    print('Inserting bookmark table')
+    db.session.add(Bookmark(user=4, product='CA-0000921'))
+    db.session.add(Bookmark(user=4, product='DD-0400061'))
+    db.session.add(Bookmark(user=4, product='DF-0700874'))
     db.session.commit()

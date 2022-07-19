@@ -11,59 +11,85 @@ db = SQLAlchemy()
 
 class AuthController:
     @staticmethod
-    def createAuthenticationToken():
-        # NOTE: body contain email and password
-        body = request.get_json()
+    def createAuthToken():
         try:
-            user = User.query.filter_by(email=body['email'].lower()).first()
-            if (bcrypt.checkpw(body['password'].encode('utf-8'), bytes(user.serialize_auth['password'], 'utf-8'))):
-                role = Role.query.filter_by(id=user.role).first().serialize
-                car = None
-                if(user.car):
-                    car = Car.query.filter_by(id=user.role).first().serialize
-                user_serialize = user.serialize
-                user_serialize['role'] = role['role']
-                user_serialize['car'] = car
+            # NOTE: body contain email and password
+            email = request.get_json()['email'].lower()
+            password = request.get_json()['password']
+            if (not email or not password):
+                raise
+            try:
+                user = User.query.filter_by(email=email).first()
+                if (bcrypt.checkpw(password.encode('utf-8'), bytes(user.serialize_auth['password'], 'utf-8'))):
+                    role = Role.query.filter_by(id=user.role).first().serialize
+                    car = None
+                    if(user.car):
+                        car = Car.query.filter_by(id=user.role).first().serialize
+                    user_serialize = user.serialize
+                    user_serialize['role'] = role['role']
+                    user_serialize['car'] = car
 
-                token = jwt.encode({'user': user_serialize, 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)}, 'Bearer')
-                return jsonify({'user': user_serialize, 'token': token }), 200
-            raise
+                    token = jwt.encode({'user': user_serialize, 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)}, 'Bearer')
+                    return jsonify({'user': user_serialize, 'token': token }), 200
+                raise
+            except:
+                return jsonify({'message': 'Email or password is incorrect'}), 401
         except:
-            return jsonify({'message': 'Email or password is incorrect'}), 401
+            return jsonify({'message': 'The email, and password are required'}), 400
 
     @staticmethod
     def addUser():
-        # NOTE: body contain imageProfile, firstname, lastname, and email
-        body = request.get_json()
-        password_salt = bcrypt.hashpw(body['password'].encode('utf-8'), bcrypt.gensalt(10))
-        user = User(body['imageProfile'], body['firstname'], body['lastname'], body['email'].lower(), password_salt, role=1, car=None)
         try:
-            db.session.add(user)
-            db.session.commit()
+            # NOTE: body contain imageProfile, firstname, lastname, email, and password
+            imageProfile = request.get_json()['imageProfile']
+            firstname = request.get_json()['firstname']
+            lastname = request.get_json()['lastname']
+            email = request.get_json()['email'].lower()
+            password = request.get_json()['password']
+            if(not imageProfile or not firstname or not lastname or not email or not password):
+                raise
+            password_salt = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(10))
+            user = User(imageProfile, firstname, lastname, email, password_salt, role=1, car=None)
+            try:
+                db.session.add(user)
+                db.session.commit()
+            except:
+                return jsonify({'message': 'This email address is already existed'}), 404
+            return jsonify({'message': 'The user information is created successfully'})
         except:
-            return jsonify({'message': 'This email address is already existed'}), 404
-        return jsonify({'message': 'The user information is created successfully'})
+            return jsonify({'message': 'The imageProfile, firstname, lastname, email, password are required'}), 400
 
     @staticmethod
     def updateUserById():
-        body = request.get_json()
-        user = db.session.query(User).filter_by(id=body['userId']).first()
         try:
-            if (user == None):
-                return jsonify({'message': 'The user id {} is not existed'.format(body['userId'])}), 404
-            # NOTE: can update imageProfile, email, firstname, lastname, and car
-            user.imageProfile = body['imageProfile']
-            user.email = body['email']
-            user.firstname = body['firstname']
-            user.lastname = body['lastname']
-            user.car = body['car']
-            db.session.commit()
-            return jsonify(user.serialize)
+            userId = request.get_json()['userId']
+            imageProfile = request.get_json()['imageProfile']
+            email = request.get_json()['email']
+            firstname = request.get_json()['firstname']
+            lastname = request.get_json()['lastname']
+            car = request.get_json()['car']
+            if (not imageProfile or not firstname or not lastname or not email or not userId):
+                raise
+
+            user = db.session.query(User).filter_by(id=userId).first()
+            try:
+                if (user == None):
+                    return jsonify({'message': 'The user id {} is not existed'.format(userId)}), 404
+                # NOTE: can update imageProfile, email, firstname, lastname, and car
+                user.imageProfile = imageProfile
+                user.email = email
+                user.firstname = firstname
+                user.lastname = lastname
+                user.car = car
+                db.session.commit()
+                return jsonify(user.serialize)
+            except:
+                return jsonify({'message': 'This email is already taken'}), 400
         except:
-            return jsonify({'message': 'This email is already taken'}), 400
+            return jsonify({'message': 'The userId, imageProfile, firstname, lastname, and email are required'}), 400
 
     @staticmethod
-    def updatePasswordByUserId():
+    def updatePasswordById():
         # NOTE: body contain userId, oldPassword, and newPassword
         body = request.get_json()
         user = db.session.query(User).filter_by(id=body['userId']).first()
@@ -76,16 +102,14 @@ class AuthController:
 
     @staticmethod
     def checkEmailExist():
-        # NOTE: body contain email
-        body = request.get_json()
         try:
-            user = User.query.filter_by(email=body['email']).first()
-            if(user):
-                return jsonify({'email': user.serialize['email']})
-            return jsonify({'message': 'The email is available'})
+            # NOTE: body contain email
+            email = request.get_json()['email']
+            if(not email):
+                raise
+                user = User.query.filter_by(email=email).first()
+                if(user):
+                    return jsonify({'email': user.serialize['email']})
+                return jsonify({'email': None})
         except:
-            return jsonify({'message': 'The body required email'}), 400
-
-    @staticmethod
-    def deleteById(user_id):
-        return db
+            return jsonify({'message': 'The email is required'}), 400

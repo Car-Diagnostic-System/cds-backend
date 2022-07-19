@@ -1,4 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify
 import boto3
 from werkzeug.utils import secure_filename

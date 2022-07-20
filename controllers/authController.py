@@ -90,15 +90,24 @@ class AuthController:
 
     @staticmethod
     def updatePasswordById():
-        # NOTE: body contain userId, oldPassword, and newPassword
-        body = request.get_json()
-        user = db.session.query(User).filter_by(id=body['userId']).first()
-        if (bcrypt.checkpw(body['oldPassword'].encode('utf-8'), bytes(user.serialize_auth['password'], 'utf-8'))):
-            password_salt = bcrypt.hashpw(body['newPassword'].encode('utf-8'), bcrypt.gensalt(10))
-            user.password = password_salt
-            db.session.commit()
-            return jsonify({'message': 'The password change successfully'}), 400
-        return jsonify({'message': 'The current password is match'}), 400
+        try:
+            # NOTE: body contain userId, oldPassword, and newPassword
+            userId = request.get_json()['userId']
+            oldPassword = request.get_json()['oldPassword']
+            newPassword = request.get_json()['newPassword']
+
+            if (not userId or not oldPassword or not newPassword):
+                raise
+
+            user = db.session.query(User).filter_by(id=userId).first()
+            if (bcrypt.checkpw(oldPassword.encode('utf-8'), bytes(user.serialize_auth['password'], 'utf-8'))):
+                password_salt = bcrypt.hashpw(newPassword.encode('utf-8'), bcrypt.gensalt(10))
+                user.password = password_salt
+                db.session.commit()
+                return jsonify({'message': 'The password is changed successfully'}), 400
+            return jsonify({'message': 'The current password is not match'}), 400
+        except:
+            return jsonify({'message': 'The userId, oldPassword, and newPassword are required'}), 400
 
     @staticmethod
     def checkEmailExist():
@@ -107,9 +116,9 @@ class AuthController:
             email = request.get_json()['email']
             if(not email):
                 raise
-                user = User.query.filter_by(email=email).first()
-                if(user):
-                    return jsonify({'email': user.serialize['email']})
-                return jsonify({'email': None})
+            user = User.query.filter_by(email=email).first()
+            if(user):
+                return jsonify({'email': user.serialize['email']})
+            return jsonify({'email': None})
         except:
             return jsonify({'message': 'The email is required'}), 400

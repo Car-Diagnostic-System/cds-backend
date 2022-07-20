@@ -1,7 +1,8 @@
 from models.car import Car
 from flask import jsonify, request
 from flask_sqlalchemy import SQLAlchemy
-from controllers.token import Token
+from utils.token import Token
+
 db = SQLAlchemy()
 
 class CarController:

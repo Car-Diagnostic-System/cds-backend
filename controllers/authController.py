@@ -57,7 +57,7 @@ class AuthController:
                 return jsonify({'message': 'This email address is already existed'}), 404
             return jsonify({'message': 'The user information is created successfully'})
         except:
-            return jsonify({'message': 'The imageProfile, firstname, lastname, email, password are required'}), 400
+            return jsonify({'message': 'The imageProfile, firstname, lastname, email, and password are required'}), 400
 
     @staticmethod
     def updateUserById():
@@ -82,7 +82,7 @@ class AuthController:
                 user.lastname = lastname
                 user.car = car
                 db.session.commit()
-                return jsonify(user.serialize)
+                return jsonify(user.serialize_user)
             except:
                 return jsonify({'message': 'This email is already taken'}), 400
         except:

@@ -18,7 +18,7 @@ class CarController:
         return jsonify({'message': 'The car information is created successfully'})
 
     @staticmethod
-    @Token.token_required
+    # @Token.token_required
     def getAllCar():
         cars = Car.query.all()
         cars = Car.serialize_list(cars)

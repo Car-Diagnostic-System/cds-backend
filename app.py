@@ -10,7 +10,7 @@ from routes.bucket_bp import BucketBlueprint
 from models.database import db
 
 app = Flask(__name__)
-CORS(app, resources={r'/*': {'origins': 'http://localhost:3000'}})
+CORS(app, resources={r'/*': {'origins': '*'}})
 app.config.from_object('config')
 
 if not database_exists(app.config["SQLALCHEMY_DATABASE_URI"]):

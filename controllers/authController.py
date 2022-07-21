@@ -46,10 +46,11 @@ class AuthController:
             lastname = request.get_json()['lastname']
             email = request.get_json()['email'].lower()
             password = request.get_json()['password']
-            if(not imageProfile or not firstname or not lastname or not email or not password):
+            car = request.get_json()['car']
+            if(not imageProfile or not firstname or not lastname or not email or not password or not car):
                 raise
             password_salt = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(10))
-            user = User(imageProfile, firstname, lastname, email, password_salt, role=1, car=None)
+            user = User(imageProfile, firstname, lastname, email, password_salt, role=1, car=car)
             try:
                 db.session.add(user)
                 db.session.commit()
@@ -57,7 +58,7 @@ class AuthController:
                 return jsonify({'message': 'This email address is already existed'}), 404
             return jsonify({'message': 'The user information is created successfully'})
         except:
-            return jsonify({'message': 'The imageProfile, firstname, lastname, email, and password are required'}), 400
+            return jsonify({'message': 'The imageProfile, firstname, lastname, email, password, and car are required'}), 400
 
     @staticmethod
     def updateUserById():

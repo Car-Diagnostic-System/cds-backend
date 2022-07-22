@@ -293,8 +293,8 @@
 292,FORD,ฟอร์ด,TELSTAR,เทลสตาร์,-,
 293,FORD,ฟอร์ด,TERRITORY,,โฉมปี 2012-2016,
 294,FORD,ฟอร์ด,TIERRA,เทียร์ร่า,-,
-295,GM,จีเอ็ม,,,-,EURO_CAR
-296,HINO,ฮีโน่,,,-,
+295,GM,จีเอ็ม,-,-,-,EURO_CAR
+296,HINO,ฮีโน่,-,-,-,
 297,HOLDEN,โฮลเด้น,CALIBRA,คาลิบร้า,-,EURO_CAR
 298,HOLDEN,โฮลเด้น,COMMODORE,คอมมอดอร์,-,EURO_CAR
 299,HONDA,ฮอนด้า,ACCORD,แอ๊คคอร์ด,-,
@@ -533,7 +533,7 @@
 532,KIA,เกีย,SORENTO,โซเรนโต,โฉมปี 2010-2015,
 533,KIA,เกีย,SPORTAGE,สปอร์ตเทจ,-,
 534,KIA,เกีย,SPORTAGE,สปอร์ตเทจ,โฉมปี 1995-2002,
-535,KOMATSU,โคมัตสุ,,,-,
+535,KOMATSU,โคมัตสุ,-,-,-,
 536,KUBOTA,คูโบต้า,KUBOTA,คูโบต้า,-,
 537,LAND ROVER,แลนด์ โรเวอร์,DEFENDER,ดีเฟนเดอร์,-,EURO_CAR
 538,LAND ROVER,แลนด์ โรเวอร์,DISCOVERY,ดิสคัฟเวอรี่,-,EURO_CAR
@@ -592,7 +592,7 @@
 591,LEXUS,เลกซัส,RX450,อาร์เอ๊กซ์450,-,
 592,LEXUS,เลกซัส,SC300,เอสซี300,-,
 593,LEXUS,เลกซัส,SC430,เอสซี430,โฉมปี 2001-2010 (UZZ40),
-594,LOTUS,โลตัส,,,-,SPORTCAR
+594,LOTUS,โลตัส,-,-,-,SPORTCAR
 595,MASERATI,มาเซราติ,GHIBLI,กิบลี,-,SPORTCAR
 596,MAZDA,มาสด้า,121,121,-,
 597,MAZDA,มาสด้า,323,323,-,

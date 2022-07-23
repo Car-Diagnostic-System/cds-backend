@@ -47,8 +47,7 @@ class AuthController:
             email = request.get_json()['email'].lower()
             password = request.get_json()['password']
             car = request.get_json()['car']
-
-            if(not firstname or not lastname or not email or not password or not car):
+            if(not firstname or not lastname or not email or not password):
                 raise
             password_salt = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt(10))
             user = User(imageProfile, firstname, lastname, email, password_salt, role=1, car=car)

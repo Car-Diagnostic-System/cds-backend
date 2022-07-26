@@ -8,3 +8,4 @@ class AuthBlueprint:
     auth_bp.route('/update', methods=['POST'])(AuthController.updateUserById)
     auth_bp.route('/update-password', methods=['POST'])(AuthController.updatePasswordById)
     auth_bp.route('/check-email', methods=['POST'])(AuthController.checkEmailExist)
+    auth_bp.route('/user-info', methods=['POST'])(AuthController.getUserInfo)

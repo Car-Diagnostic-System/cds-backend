@@ -21,14 +21,14 @@ class AuthController:
             try:
                 user = User.query.filter_by(email=email).first()
                 if (bcrypt.checkpw(password.encode('utf-8'), bytes(user.serialize_auth['password'], 'utf-8'))):
-                    role = Role.query.filter_by(id=user.role).first().serialize
+                    user = user.serialize
+                    role = Role.query.filter_by(id=user['role']).first().serialize
                     car = None
-                    if(user.car):
-                        car = Car.query.filter_by(id=user.role).first().serialize
-                    user_serialize = user.serialize
+                    if(user['car']):
+                        car = Car.query.filter_by(id=user['car']).first().serialize
+                    user_serialize = user
                     user_serialize['role'] = role['role']
                     user_serialize['car'] = car
-
                     token = jwt.encode({'user': user_serialize, 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)}, 'Bearer')
                     return jsonify({'user': user_serialize, 'token': token }), 200
                 raise
@@ -71,7 +71,6 @@ class AuthController:
             car = request.get_json()['car']
             if (not firstname or not lastname or not email or not userId):
                 raise
-
             user = db.session.query(User).filter_by(id=userId).first()
             try:
                 if (user == None):
@@ -105,7 +104,7 @@ class AuthController:
                 password_salt = bcrypt.hashpw(newPassword.encode('utf-8'), bcrypt.gensalt(10))
                 user.password = password_salt
                 db.session.commit()
-                return jsonify({'message': 'The password is changed successfully'}), 400
+                return jsonify({'message': 'The password is changed successfully'}), 200
             return jsonify({'message': 'The current password is not match'}), 400
         except:
             return jsonify({'message': 'The userId, oldPassword, and newPassword are required'}), 400
@@ -123,3 +122,25 @@ class AuthController:
             return jsonify({'email': None})
         except:
             return jsonify({'message': 'The email is required'}), 400
+
+    @staticmethod
+    def getUserInfo():
+        try:
+            userId = request.get_json()['userId']
+            if(not userId):
+                raise
+            user = User.query.filter_by(id=userId).first()
+            if(not user):
+                return jsonify({'message': 'The userid {} is not found'.format(userId)})
+            car = None
+            user = user.serialize
+            role = Role.query.filter_by(id=user['role']).first().serialize
+            if (user['car']):
+                car = Car.query.filter_by(id=user['car']).first().serialize
+            user_serialize = user
+            user_serialize['car'] = car
+            user_serialize['role'] = role['role']
+            print(user_serialize)
+            return jsonify(user_serialize)
+        except:
+            return jsonify({'message': 'The userId is required'}), 400

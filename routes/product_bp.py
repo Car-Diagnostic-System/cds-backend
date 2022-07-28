@@ -3,8 +3,10 @@ from controllers.productController import ProductController
 
 class ProductBlueprint:
     product_bp = Blueprint('product_bp', __name__, url_prefix='/products')
+    # NOTE: unused endpoint
     product_bp.route('/create', methods=['POST'])(ProductController.createProduct)
     product_bp.route('/', methods=['GET'])(ProductController.getAllProduct)
+    # NOTE: unused endpoint
     product_bp.route('/page/<int:page>', methods=['GET'])(ProductController.getAllProductPagination)
     product_bp.route('/<string:product_id>', methods=['GET'])(ProductController.getProductById)
     product_bp.route('/<string:product_id>/update', methods=['POST'])(ProductController.updateProductById)

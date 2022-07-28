@@ -7,6 +7,7 @@ db = SQLAlchemy()
 
 class CarController:
     @staticmethod
+    @Token.admin_token_required
     def createCar():
         body = request.get_json()
         car = Car(body['brand'], body['brand_th'], body['model'], body['model_th'], body['nickname'], body['segment'])
@@ -18,7 +19,6 @@ class CarController:
         return jsonify({'message': 'The car information is created successfully'})
 
     @staticmethod
-    # @Token.token_required
     def getAllCar():
         cars = Car.query.all()
         cars = Car.serialize_list(cars)
@@ -50,6 +50,7 @@ class CarController:
         return jsonify(car.serialize)
 
     @staticmethod
+    @Token.admin_token_required
     def updateCarById(car_id):
         car = db.session.query(Car).filter_by(id=car_id).first()
         if (car == None):
@@ -61,6 +62,7 @@ class CarController:
         return jsonify(car.serialize)
 
     @staticmethod
+    @Token.admin_token_required
     def deleteCarById(car_id):
         car = db.session.get(Car, car_id)
         try:

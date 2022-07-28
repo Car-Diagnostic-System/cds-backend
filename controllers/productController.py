@@ -1,11 +1,13 @@
 from flask import jsonify, request
 from models.product import Product
 from flask_sqlalchemy import SQLAlchemy
+from utils.token import Token
 
 db = SQLAlchemy()
 
 class ProductController:
     @staticmethod
+    @Token.token_required
     def createProduct():
         body = request.get_json()
         product = Product(body['serial_no'], body['supplier_no'], body['oem_no'], body['benchmark_no'], body['car_brand'], body['car_model'], body['model_name_th'],
@@ -44,6 +46,7 @@ class ProductController:
         return jsonify(product.serialize)
 
     @staticmethod
+    @Token.admin_token_required
     def updateProductById(product_id):
         product = db.session.query(Product).filter_by(serial_no=product_id).first()
         if (product == None):
@@ -64,6 +67,7 @@ class ProductController:
         return jsonify(product.serialize)
 
     @staticmethod
+    @Token.admin_token_required
     def deleteProductById(product_id):
         car = db.session.get(Product, product_id)
         try:

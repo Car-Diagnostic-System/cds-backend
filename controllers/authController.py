@@ -6,6 +6,7 @@ from models.user import User
 from models.role import Role
 from models.car import Car
 from flask_sqlalchemy import SQLAlchemy
+from utils.token import Token
 
 db = SQLAlchemy()
 
@@ -61,6 +62,7 @@ class AuthController:
             return jsonify({'message': 'The request body required imageProfile, firstname, lastname, email, password, and car'}), 400
 
     @staticmethod
+    @Token.token_required
     def updateUserByUserId():
         try:
             userId = request.get_json()['userId']
@@ -97,6 +99,7 @@ class AuthController:
             return jsonify({'message': 'The request body required userId, imageProfile, firstname, lastname, email, and car'}), 400
 
     @staticmethod
+    @Token.token_required
     def updatePasswordByUserId():
         try:
             # NOTE: body contain userId, oldPassword, and newPassword

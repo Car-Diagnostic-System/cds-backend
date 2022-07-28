@@ -21,7 +21,7 @@ class BookmarkController:
             result = {'userID': userId, 'products': products}
             return jsonify(result)
         except:
-            return jsonify({'message': 'The bookmark for userID {} is not existed'.format(userId)}), 400
+            return jsonify({'message': 'The bookmark for userID {} is not existed'.format(userId)})
 
     @staticmethod
     def addBookmark():
@@ -30,7 +30,7 @@ class BookmarkController:
             userId = request.get_json()['userId']
             serialNo = request.get_json()['serialNo']
             if(not userId or not serialNo):
-                raise
+                return jsonify({'message': 'The userId, and serialNo cannot be null'}), 400
             bookmark = Bookmark(userId, serialNo)
             try:
                 db.session.add(bookmark)
@@ -39,7 +39,7 @@ class BookmarkController:
                 return jsonify({'message': 'This bookmark information went wrong'}), 404
             return jsonify({'message': 'The bookmark is added successfully'})
         except:
-            return jsonify({'message': 'The userId, and serialNo are required'}), 400
+            return jsonify({'message': 'The request body required userId, and serialNo'}), 400
     @staticmethod
     def removeBookmark():
         # NOTE: body contain userId and serialNo
@@ -47,7 +47,7 @@ class BookmarkController:
             userId = request.get_json()['userId']
             serialNo = request.get_json()['serialNo']
             if (not userId or not serialNo):
-                raise
+                return jsonify({'message': 'The userId, and serialNo cannot be null'}), 400
             bookmark = db.session.query(Bookmark).filter_by(user=userId, product=serialNo).first()
             try:
                 db.session.delete(bookmark)
@@ -56,4 +56,4 @@ class BookmarkController:
                 return jsonify({'message': 'This bookmark is not existed'}), 404
             return jsonify({'message': 'The bookmark is deleted successfully'})
         except:
-            return jsonify({'message': 'The userId, and serialNo are required'}), 400
+            return jsonify({'message': 'The request body required userId, and serialNo'}), 400

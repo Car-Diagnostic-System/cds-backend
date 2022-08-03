@@ -33,24 +33,6 @@ class User(db.Model):
             'car': self.car
         }
 
-    @property
-    def serialize_user(self):
-        return {
-            'id': self.id,
-            'imageProfile': self.imageProfile,
-            'firstname': self.firstname,
-            'lastname': self.lastname,
-            'email': self.email,
-            'car': self.car
-        }
-
-    @property
-    def serialize_auth(self):
-        return {
-            'email': self.email,
-            'password': self.password
-        }
-
     @staticmethod
     def serialize_list(list):
         return [m.serialize for m in list]

@@ -21,13 +21,12 @@ class AuthController:
                 return jsonify({'message': 'The email, and password cannot be null'}), 400
             try:
                 user = User.query.filter_by(email=email).first()
-                if (bcrypt.checkpw(password.encode('utf-8'), bytes(user.serialize_auth['password'], 'utf-8'))):
-                    user = user.serialize
-                    role = Role.query.filter_by(id=user['role']).first().serialize
+                if (bcrypt.checkpw(password.encode('utf-8'), bytes(user.password, 'utf-8'))):
+                    role = Role.query.filter_by(id=user.role).first().serialize
                     car = None
-                    if(user['car']):
-                        car = Car.query.filter_by(id=user['car']).first().serialize
-                    user_serialize = user
+                    if(user.car):
+                        car = Car.query.filter_by(id=user.car).first().serialize
+                    user_serialize = user.serialize
                     user_serialize['role'] = role['role']
                     user_serialize['car'] = car
                     token = jwt.encode({'user': user_serialize, 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)}, 'Bearer')
@@ -71,7 +70,6 @@ class AuthController:
             firstname = request.get_json()['firstname']
             lastname = request.get_json()['lastname']
             car = request.get_json()['car']
-            print(car)
             if (not firstname or not lastname or not email or not userId):
                 return jsonify({'message': 'The firstname, lastname, email, and password cannot be null'}), 400
             user = db.session.query(User).filter_by(id=userId).first()
@@ -111,7 +109,7 @@ class AuthController:
                 return jsonify({'message': 'The userId, oldPassword, and newPassword cannot be null'}), 400
 
             user = db.session.query(User).filter_by(id=userId).first()
-            if (bcrypt.checkpw(oldPassword.encode('utf-8'), bytes(user.serialize_auth['password'], 'utf-8'))):
+            if (bcrypt.checkpw(oldPassword.encode('utf-8'), bytes(user.password, 'utf-8'))):
                 password_salt = bcrypt.hashpw(newPassword.encode('utf-8'), bcrypt.gensalt(10))
                 user.password = password_salt
                 db.session.commit()
@@ -129,7 +127,7 @@ class AuthController:
                 return jsonify({'message': 'The email cannot be null'}), 400
             user = User.query.filter_by(email=email).first()
             if(user):
-                return jsonify({'email': user.serialize['email']})
+                return jsonify({'email': user.email})
             return jsonify({'email': None})
         except:
             return jsonify({'message': 'The email is required'}), 400

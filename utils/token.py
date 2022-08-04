@@ -43,7 +43,7 @@ class Token:
                 return jsonify({'message': 'Token is missing'}), 403
             try:
                 data = jwt.decode(token, 'Bearer', algorithms=['HS256'])
-                if data['user']['role'] != 'USER':
+                if data['user']['role'] != 'MEMBER':
                     raise
             except:
                 return jsonify({'message': 'Token is invalid'}), 403

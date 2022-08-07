@@ -20,10 +20,10 @@ class BookmarkController:
             products = []
             for b in bookmarks:
                 products.append(Product.query.filter_by(serial_no=b['product']).first().serialize)
-            result = {'userID': userId, 'products': products}
+            result = {'userId': userId, 'products': products}
             return jsonify(result)
         except:
-            return jsonify({'message': 'The bookmark for userID {} is not existed'.format(userId)})
+            return jsonify({'message': 'The bookmark for userId {} is not existed'.format(userId)})
 
     @staticmethod
     @Token.user_token_required

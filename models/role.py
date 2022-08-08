@@ -14,3 +14,7 @@ class Role(db.Model):
         return {
             'role': self.role,
         }
+
+    @staticmethod
+    def serialize_list(list):
+        return [m.serialize for m in list]

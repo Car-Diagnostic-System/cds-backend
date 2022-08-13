@@ -8,7 +8,7 @@ db = SQLAlchemy()
 
 class BookmarkController:
     @staticmethod
-    @Token.user_token_required
+    @Token.member_token_required
     def getBookmarkByUserId():
         # NOTE: body contain userId
         userId = request.get_json()['userId']
@@ -26,7 +26,7 @@ class BookmarkController:
             return jsonify({'message': 'The bookmark for userId {} is not existed'.format(userId)})
 
     @staticmethod
-    @Token.user_token_required
+    @Token.member_token_required
     def addBookmark():
         # NOTE: body contain userId and serialNo
         try:
@@ -45,7 +45,7 @@ class BookmarkController:
             return jsonify({'message': 'The request body required userId, and serialNo'}), 400
 
     @staticmethod
-    @Token.user_token_required
+    @Token.member_token_required
     def removeBookmark():
         # NOTE: body contain userId and serialNo
         try:

@@ -25,7 +25,7 @@ producer = KafkaProducer(
 
 class SymptomController:
     @staticmethod
-    @Token.user_token_required
+    @Token.member_token_required
     def queryCarSymptom():
         try:
             brand = request.get_json()['brand']
@@ -68,7 +68,7 @@ class SymptomController:
             return jsonify({'message': 'The request body required brand, model, nickname, and symptom'}), 400
 
     @staticmethod
-    @Token.admin_token_required
+    @Token.member_token_required
     def indexing():
         if 'file' not in request.files:
             return jsonify({'message': 'No file is not exist'}), 400

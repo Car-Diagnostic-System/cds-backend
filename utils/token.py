@@ -35,7 +35,7 @@ class Token:
         return decorated
 
     @staticmethod
-    def user_token_required(f):
+    def member_token_required(f):
         @wraps(f)
         def decorated(*args, **kwargs):
             token = request.headers.get('Authorization')

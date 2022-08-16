@@ -2,7 +2,6 @@ from .database import db
 
 class User(db.Model):
     __tablename__ = 'user'
-
     id = db.Column(db.Integer, primary_key=True)
     imageProfile = db.Column(db.String(255), nullable=True)
     firstname = db.Column(db.String(255))

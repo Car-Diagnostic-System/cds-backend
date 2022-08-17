@@ -55,14 +55,14 @@ class AuthController:
                 db.session.add(user)
                 db.session.commit()
             except:
-                return jsonify({'message': 'This email address is already existed'}), 404
+                return jsonify({'message': 'This email address is already existed'}), 400
             return jsonify({'message': 'The user information is created successfully'})
         except:
             return jsonify({'message': 'The request body required imageProfile, firstname, lastname, email, password, and car'}), 400
 
     @staticmethod
     @Token.token_required
-    def updateUserByUserId():
+    def updateInfoByUserId():
         try:
             userId = request.get_json()['userId']
             imageProfile = request.get_json()['imageProfile']

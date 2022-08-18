@@ -28,8 +28,6 @@ class BucketController:
             file.filename = secure_filename('{0}-{1}'.format(datetime.now(), file.filename))
             bucket = s3.Bucket(BUCKET_NAME)
             bucket.upload_fileobj(file, Key=file.filename)
-            print(file)
-            print(file.filename)
             url = f'https://{BUCKET_NAME}.{REGION}.amazonaws.com/{file.filename}'
 
             return jsonify(url)

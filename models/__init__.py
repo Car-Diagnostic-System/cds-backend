@@ -58,6 +58,7 @@ def create_user(*args, **kwargs):
     db.session.add(User(imageProfile='https://cds-photo.s3.ap-southeast-1.amazonaws.com/tong.jpeg', firstname='กฤตพร', lastname='แก้วปิยรัตน์', email='krittaporn.tong@gmail.com', password=bcrypt.hashpw('tongPassword'.encode('utf-8'), bcrypt.gensalt(10)), role=1, car=1016))
     db.session.add(User(imageProfile='https://cds-photo.s3.ap-southeast-1.amazonaws.com/fax.jpeg', firstname='พรมงคง', lastname='พุทธิแจ่ม', email='fax@gmail.com', password=bcrypt.hashpw('faxPassword'.encode('utf-8'), bcrypt.gensalt(10)), role=1, car=322))
     db.session.add(User(imageProfile='https://cds-photo.s3.ap-southeast-1.amazonaws.com/kong.jpeg', firstname='ภาสกร', lastname='เปียงใจ', email='kong@gmail.com', password=bcrypt.hashpw('kongPassword'.encode('utf-8'), bcrypt.gensalt(10)), role=1, car=921))
+    db.session.add(User(imageProfile='https://cds-photo.s3.ap-southeast-1.amazonaws.com/oat.jpeg', firstname='โอ๊ต', lastname='โอลาริต้า', email='oat@gmail.com', password=bcrypt.hashpw('oatPassword'.encode('utf-8'), bcrypt.gensalt(10)), role=1, car=None))
     db.session.commit()
 
 @event.listens_for(Bookmark.__table__, 'after_create')

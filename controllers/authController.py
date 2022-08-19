@@ -71,7 +71,7 @@ class AuthController:
             lastname = request.get_json()['lastname']
             car = request.get_json()['car']
             if (not firstname or not lastname or not email or not userId):
-                return jsonify({'message': 'The firstname, lastname, email, and password cannot be null'}), 400
+                return jsonify({'message': 'The firstname, lastname, and email cannot be null'}), 400
             user = db.session.query(User).filter_by(id=userId).first()
             try:
                 if (user == None):
